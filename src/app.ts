@@ -1,6 +1,7 @@
 import express from 'express';
 import { envs } from './config/envs';
 import { GithubController } from './presentation/github/controller';
+import { GitHubSha256Middleware } from './presentation/middlewares/github-sha256.middleware';
 
 (() => {
 
@@ -16,7 +17,9 @@ function main () {
 
     app.use(express.json());
 
-    app.post('/api/github',  controller.webhookHandler)
+    app.use(GitHubSha256Middleware.verifyGithubSignature );
+
+    app.post('/api/github', controller.webhookHandler)
 
     app.listen(envs.PORT, () => {
         console.log(`Server running on port ${envs.PORT}`);
